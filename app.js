@@ -20,6 +20,21 @@ app.use(express.static('public'));
 app.get('/', (req, res) => {
   res.render('home', { paragraph: homeStartingContent });
 });
+app.get('/about', (req, res) => {
+  res.render('about', { paragraph: aboutContent });
+});
+app.get('/contact', (req, res) => {
+  res.render('contact', { paragraph: contactContent });
+});
+app.get('/compose', (req, res) => {
+  res.render('compose');
+});
+
+app.post('/compose', (req, res) => {
+  console.log(req.body.postTitle);
+
+  res.redirect('/compose');
+});
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
