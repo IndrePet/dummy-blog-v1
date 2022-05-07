@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import ejs from 'ejs';
+import _ from 'lodash';
 
 const app = express();
 
@@ -11,6 +12,8 @@ const aboutContent =
 const contactContent =
   'Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.';
 
+const posts = [];
+
 const port = 3000;
 
 app.set('view engine', 'ejs');
@@ -18,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-  res.render('home', { paragraph: homeStartingContent });
+  res.render('home', { paragraph: homeStartingContent, blogPosts: posts });
 });
 app.get('/about', (req, res) => {
   res.render('about', { paragraph: aboutContent });
@@ -31,9 +34,24 @@ app.get('/compose', (req, res) => {
 });
 
 app.post('/compose', (req, res) => {
-  console.log(req.body.postTitle);
+  const post = {
+    title: req.body.postTitle,
+    content: req.body.postContent,
+  };
 
-  res.redirect('/compose');
+  posts.push(post);
+  res.redirect('/');
+});
+
+app.get('/posts/:title', (req, res) => {
+  const requestedTitle = _.kebabCase(req.params.title);
+  for (const post of posts) {
+    const responseTitle = _.kebabCase(post.title);
+    if (requestedTitle === responseTitle) {
+      res.render('post', { postTitle: post.title, postBody: post.content });
+    }
+  }
+  res.redirect('/');
 });
 
 app.listen(port, () => {

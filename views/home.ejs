@@ -2,5 +2,14 @@
 <div class="container">
   <h1>Hello</h1>
   <p><%= paragraph %></p>
+  <% for(const post of blogPosts){ %>
+  <h2><%= post.title %></h2>
+  <p>
+    <%= post.content.slice(0, 100) + '...' %>
+    <a href="<%= '/posts/' + post.title.split(' ').join('-').toLowerCase() %>"
+      >Read more</a
+    >
+  </p>
+  <% } %>
 </div>
 <%- include('./partials/footer') -%>
